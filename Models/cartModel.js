@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const wishlistSchema = new mongoose.Schema({
+const cartSchema = new mongoose.Schema({
     id:{
         type:Number,
         require:true
@@ -33,11 +33,20 @@ const wishlistSchema = new mongoose.Schema({
             type:Number,
             require:true
         }
-    },userId:{
+    },
+    quantity:{
+        type:Number,
+        required:true
+    },
+    grantTotal:{
+        type:Number,
+        required:true
+    },
+    userId:{
         type:String,
         require:true
     }
 })
 
-const wishlists = mongoose.model('wishlists',wishlistSchema)
-module.exports = wishlists
+const carts = mongoose.model('carts',cartSchema)
+module.exports = carts
