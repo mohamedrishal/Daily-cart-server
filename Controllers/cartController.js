@@ -34,3 +34,68 @@ exports.getCartController = async (req,res)=>{
         res.status(401).json(err)
     }
 }
+
+// increment quantity 
+exports.incrementCartController = async (req,res)=>{
+    const {id} = req.params
+    try{
+        const selectedProduct = await carts.findOne({_id:id})
+        if(selectedProduct){
+            selectedProduct.quantity +=1
+            selectedProduct.grantTotal = selectedProduct.quantity*selectedProduct.price
+            await selectedProduct.save()
+            res.status(200).json("Quantity Incremented")
+        }else{
+            res.status(404).json("Product not Found")
+        }
+    }catch(err){
+        res.status(401).json(err)
+    }
+}
+
+// Decrement quantity
+exports.decrementCartController = async (req,res)=>{
+    const {id} = req.params
+    try{
+        const selectedProduct = await carts.findOne({_id:id})
+        if(selectedProduct){
+            selectedProduct.quantity -=1
+            if(selectedProduct.quantity===0){
+                await carts.deleteOne({_id:id})
+                res.status(200).json("Item removed")
+            }else{
+                selectedProduct.grantTotal = selectedProduct.quantity*selectedProduct.price
+                await selectedProduct.save()
+                res.status(200).json("Quantity Decremented")
+            }
+           
+        }else{
+            res.status(404).json("Product not Found")
+        }
+    }catch(err){
+        res.status(401).json(err)
+    }
+}
+
+  // remove cart items
+
+  exports.removeCartItemController = async (req,res)=>{
+    const {id} = req.params
+    try{
+        await carts.deleteOne({_id:id})
+        res.status(200).json('Item removed!!')
+    }catch(err){
+        res.status(401).json(err)
+    }
+  }
+
+//   emptycart 
+exports.emptyCartController  = async (req,res)=>{
+    const userId = req.payload
+    try{
+        await carts.deleteMany({userId})
+        res.status(200).json('all Items removed')
+    }catch(err){
+        res.status(401).json(err)
+    }
+}
